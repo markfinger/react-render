@@ -3,7 +3,7 @@ Sups
 
 So, I'm thinking of something which exposes an interface somewhat...
 
-```
+```javascript
 var renderer = require('react-rendering-service');
 
 var opts = {
