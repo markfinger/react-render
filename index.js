@@ -11,7 +11,6 @@ require('babel/register')({
   extensions: ['.jsx']
 });
 
-var pathToNodeModules = path.join(__dirname, 'node_modules');
 var components = [];
 
 var Component = function Component(pathToSource, watchSource) {
@@ -53,7 +52,7 @@ Component.prototype.getWatcherCompilerConfig = function getWatcherCompilerConfig
       ]
     },
     resolveLoader: {
-      root: pathToNodeModules
+      root: path.join(__dirname, 'node_modules')
     },
     devtool: 'eval'
   };
@@ -107,15 +106,15 @@ Component.prototype.callPending = function callPending(err) {
   });
 };
 
-Component.prototype.onWatchedComponentBuilt = function onWatchedComponentBuilt(callback) {
+Component.prototype.onWatchedComponentBuilt = function onWatchedComponentBuilt(cb) {
   // The component has already been built
   console.log('Watched component already built');
   if (this.component) {
-    return callback(null);
+    return cb(null);
   }
 
   console.log('Added pending callback for watched component');
-  this.pending.push(callback);
+  this.pending.push(cb);
 
   if (this.pending.length === 1) {
     console.log('Waiting for watcher to build component');
@@ -162,64 +161,56 @@ Component.prototype.renderWithResolvedReact = function(options) {
   return React.renderToString(element);
 };
 
-Component.prototype.renderComponent = function renderComponent(options, callback) {
+Component.prototype.renderComponent = function renderComponent(options, cb) {
   console.log('Rendering component');
   try {
     var markup = this.renderWithResolvedReact(options);
   } catch(err) {
-    return callback(err);
+    return cb(err);
   }
   console.log('Rendered component');
-  callback(null, markup);
+  cb(null, markup);
 };
 
-Component.prototype.render = function render(options, callback) {
+Component.prototype.render = function render(options, cb) {
   if (options.watchSource) {
     console.log('watching component');
     // Render the component once the watched component has been built
     return this.onWatchedComponentBuilt(function(err) {
       if (err) {
-        return callback(err);
+        return cb(err);
       }
-      this.renderComponent(options, callback);
+      this.renderComponent(options, cb);
     }.bind(this));
   }
 
   try {
     this.component = require(options.pathToSource);
   } catch(err) {
-    return callback(err);
+    return cb(err);
   }
 
-  this.renderComponent(options, callback);
+  this.renderComponent(options, cb);
 };
 
-var onError = function onError(response, err) {
-  if (!(err instanceof Error)) {
-    err = new Error(err);
-  }
-  console.error(err.stack);
-  response.status(500).send(err.stack);
-};
-
-var service = function service(data, response) {
+var service = function service(data, cb) {
   var options = {
-    pathToSource: data.path_to_source,
-    serializedProps: data.serialized_props,
+    pathToSource: data.pathToSource,
+    serializedProps: data.serializedProps,
     props: null,
-    toStaticMarkup: data.to_static_markup,
-    watchSource: data.watch_source
+    toStaticMarkup: data.toStaticMarkup,
+    watchSource: data.watchSource
   };
 
   if (!options.pathToSource) {
-    return onError(response, 'No path_to_source option was provided');
+    return cb('No pathToSource option was provided');
   }
 
   if (options.serializedProps) {
     try {
       options.props = JSON.parse(options.serializedProps);
-    } catch(e) {
-      return onError(response, e);
+    } catch(err) {
+      return cb(err);
     }
   }
 
@@ -233,16 +224,16 @@ var service = function service(data, response) {
     try {
       component = new Component(options.pathToSource, options.watchSource);
     } catch(err) {
-      return onError(response, err)
+      return cb(err)
     }
     components.push(component);
   }
 
   component.render(options, function(err, output) {
     if (err) {
-      return onError(response, err);
+      return cb(err);
     }
-    response.send(output);
+    cb(null, output);
   });
 };
 
