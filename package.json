@@ -1,13 +1,38 @@
 {
-  "private": true,
+  "name": "react-render",
+  "version": "0.0.1",
+  "description": "blah",
+  "author": "Mark Finger <markfinger@gmail.com",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "homepage": "https://github.com/markfinger/react-render",
+  "bugs": {
+    "url": "https://github.com/markfinger/react-render/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/markfinger/react-render.git"
+  },
   "dependencies": {
-    "babel": "^4.7.5",
-    "babel-core": "^4.7.5",
-    "babel-loader": "^4.1.0",
-    "lodash": "^3.5.0",
-    "resolve": "^1.1.5",
+    "babel": "^4.7.16",
+    "babel-core": "^4.7.16",
+    "babel-loader": "^4.3.0",
+    "lodash": "^3.6.0",
+    "resolve": "^1.1.6",
     "tmp": "0.0.25",
-    "webpack": "^1.7.2",
+    "webpack": "^1.7.3",
     "webpack-watcher": "git://github.com/markfinger/webpack-watcher#b95b031434e4cdb52f2640d56be28b95429bc9ce"
+  },
+  "peerDependencies": {
+    "react": "*"
+  },
+  "devDependencies": {
+    "chai": "^2.1.1",
+    "mocha": "^2.2.1",
+    "react": "*"
+  },
+  "scripts": {
+    "test": "mocha",
+    "test-debug": "mocha debug"
   }
 }
