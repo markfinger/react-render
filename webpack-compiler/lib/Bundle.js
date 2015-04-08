@@ -1,17 +1,20 @@
 var webpack = require('webpack');
 var _ = require('lodash');
+var chokidar = require('chokidar');
 
 var Bundle = function Bundle(opts) {
   this.opts = opts;
   this.cacheKey = opts;
 
-  this.err = null;
-  this.stats = null;
+  this.watchingConfig = false;
 
   this.compiler = null;
   this.isCompiling = false;
   this.hasCompiled = false;
   this._onceDone = [];
+
+  this.err = null;
+  this.stats = null;
 };
 
 Bundle.prototype.invalidate = function invalidate() {
@@ -19,6 +22,13 @@ Bundle.prototype.invalidate = function invalidate() {
   this.hasCompiled = false;
   this.err = null;
   this.stats = null;
+};
+
+Bundle.prototype.invalidateConfig = function invalidateConfig() {
+  this.config = null;
+  delete require.cache[this.opts.config];
+  this.compiler = null;
+  this.invalidate();
 };
 
 Bundle.prototype.getConfig = function getConfig(cb) {
@@ -38,6 +48,11 @@ Bundle.prototype.getConfig = function getConfig(cb) {
     } catch(err) {
       return cb(err);
     }
+  }
+
+  if (this.opts.watchConfig && !this.watchingConfig && _.isString(this.opts.config)) {
+    this.watchingConfig = true;
+    this.watchFile(this.opts.config, this.invalidateConfig.bind(this));
   }
 
   cb(null, this.config)
@@ -96,6 +111,41 @@ Bundle.prototype.callDone = function callDone(err, stats) {
   _onceDone.forEach(function(cb) {
     cb(err, stats);
   }, this);
+};
+
+Bundle._watchedFiles = {};
+
+Bundle._watcher = null;
+
+Bundle.prototype.watchFile = function watchFile(filename, cb) {
+  if (!Bundle._watcher) {
+    Bundle._watcher = new chokidar.FSWatcher();
+    Bundle._watcher.on('change', this.onFileChange);
+  }
+
+  if (Bundle._watchedFiles[filename]) {
+    Bundle._watchedFiles[filename].push(cb);
+  } else {
+    Bundle._watchedFiles[filename] = [cb];
+    Bundle._watcher.add(filename);
+  }
+};
+
+Bundle.prototype.onFileChange = function onFileChange(filename) {
+  var callbacks = Bundle._watchedFiles[filename];
+  if (callbacks && callbacks.length) {
+    callbacks.forEach(function(cb) {
+      cb();
+    });
+  }
+};
+
+Bundle._resetFileWatcher = function _resetFileWatcher() {
+  if (Bundle._watcher) {
+    Bundle._watcher.close();
+    Bundle._watcher = null;
+  }
+  Bundle._watchedFiles = {};
 };
 
 module.exports = Bundle;
