@@ -286,6 +286,9 @@ var Bundle = require('./Bundle');
 // TODO: fullStats flag (default: false)
 
 var webpackCompiler = function webpackCompiler(opts, cb) {
+  //  if (config.output && config.output.path) {
+//    config.output.path = config.output.path.replace('[bundle_dir]', options.bundleDir);
+//  }
   var bundle = cache.find(Bundle, opts);
 
   if (!bundle) {
