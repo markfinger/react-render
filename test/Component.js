@@ -1,5 +1,6 @@
 var path = require('path');
 var assert = require('chai').assert;
+var _ = require('lodash');
 var Component = require('../lib/Component');
 var Hello = require('./test_components/Hello');
 var ErrorThrowingComponent = require('./test_components/ErrorThrowingComponent');
