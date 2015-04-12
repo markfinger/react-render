@@ -35,7 +35,7 @@ describe('Component', function() {
       component: Hello
     });
 
-    component.renderToStaticMarkup(function(err, markup) {
+    component.renderToStaticMarkup(null, function(err, markup) {
       assert.isNull(err);
       assert.equal(markup, '<div>Hello </div>');
       done();
@@ -46,7 +46,7 @@ describe('Component', function() {
       component: Hello
     });
 
-    component.renderToString(function(err, markup) {
+    component.renderToString(null, function(err, markup) {
       assert.isNull(err);
       assert.include(markup, '<div');
       assert.include(markup, '><span');
@@ -89,7 +89,7 @@ describe('Component', function() {
 
     component.getComponent(function(err, component) {
       assert.instanceOf(err, Error);
-      assert.include(err.stack, 'Component missing `path` and `component` properties');
+      assert.include(err.stack, 'Component missing `path` property');
       assert.isUndefined(component);
       done();
     });
@@ -99,7 +99,7 @@ describe('Component', function() {
       component: ErrorThrowingComponent
     });
 
-    component.renderToString(function(err, output) {
+    component.renderToString(null, function(err, output) {
       assert.instanceOf(err, Error);
       assert.include(err.stack, 'Error from inside ErrorThrowingComponent');
       assert.include(err.stack, path.join(__dirname, 'test_components', 'ErrorThrowingComponent.js'));

@@ -84,7 +84,7 @@ describe('reactRender', function() {
       }
     }, function(err, output) {
       assert.instanceOf(err, Error);
-      assert.include(err.stack, 'Component missing `path` and `component` properties');
+      assert.include(err.stack, 'Component missing `path` property');
       assert.isUndefined(output);
       done();
     });
@@ -102,34 +102,45 @@ describe('reactRender', function() {
       done();
     });
   });
-  it('should reuse Component instances when called', function(done) {
+  it('should reuse Component instances when called', function() {
     assert.isArray(cache._cache);
     assert.equal(cache._cache.length, 0);
 
-    reactRender({
-      component: Hello
-    }, function() {
-      assert.equal(cache._cache.length, 1);
-      assert.instanceOf(cache._cache[0], Component);
-      assert.equal(cache._cache[0].component, Hello);
+    reactRender({component: Hello}, function() {});
+    assert.equal(cache._cache.length, 1);
+    assert.instanceOf(cache._cache[0], Component);
+    assert.equal(cache._cache[0].component, Hello);
 
-      reactRender({
-        component: Hello
-      }, function() {
-        assert.equal(cache._cache.length, 1);
-        assert.instanceOf(cache._cache[0], Component);
-        assert.equal(cache._cache[0].component, Hello);
 
-        reactRender({
-          component: Hello
-        }, function() {
-          assert.equal(cache._cache.length, 1);
-          assert.instanceOf(cache._cache[0], Component);
-          assert.equal(cache._cache[0].component, Hello);
-          done();
-        });
-      });
-    });
+    reactRender({path: 'foo'}, function() {});
+    assert.equal(cache._cache.length, 2);
+    assert.instanceOf(cache._cache[1], Component);
+    assert.equal(cache._cache[1].opts.path, 'foo');
+
+    reactRender({path: 'foo'}, function() {});
+    assert.equal(cache._cache.length, 2);
+    assert.instanceOf(cache._cache[1], Component);
+    assert.equal(cache._cache[1].opts.path, 'foo');
+
+    reactRender({path: 'foo', props: {bar: 1}}, function() {});
+    assert.equal(cache._cache.length, 2);
+    assert.instanceOf(cache._cache[1], Component);
+    assert.equal(cache._cache[1].opts.path, 'foo');
+
+    reactRender({path: 'bar', serializedProps: {bar: 1}}, function() {});
+    assert.equal(cache._cache.length, 3);
+    assert.instanceOf(cache._cache[2], Component);
+    assert.equal(cache._cache[2].opts.path, 'bar');
+
+    reactRender({path: 'foo', serializedProps: '{"bar": 1}'}, function() {});
+    assert.equal(cache._cache.length, 3);
+    assert.instanceOf(cache._cache[1], Component);
+    assert.equal(cache._cache[1].opts.path, 'foo');
+
+    reactRender({path: 'bar', serializedProps: '{"bar": 1}'}, function() {});
+    assert.equal(cache._cache.length, 3);
+    assert.instanceOf(cache._cache[2], Component);
+    assert.equal(cache._cache[2].opts.path, 'bar');
   });
   it('passes up errors thrown during a component\'s rendering', function(done) {
     reactRender({
@@ -142,29 +153,4 @@ describe('reactRender', function() {
       done();
     });
   });
-  //it('can transform a component using JSX', function(done) {
-  //  reactRender({
-  //    path: path.join(__dirname, 'test_components', 'Hello.jsx'),
-  //    props: {
-  //      name: 'World'
-  //    },
-  //    transform: true,
-  //    toStaticMarkup: true
-  //  }, function(err, output) {
-  //    assert.isNull(err);
-  //    assert.equal(output, '<div>Hello World</div>');
-  //    done();
-  //  });
-  //});
-  //it('should map stack traces for transformed components back to the original file', function(done) {
-  //  reactRender({
-  //    path: path.join(__dirname, 'test_components', 'RunTimeError.jsx'),
-  //    transform: true
-  //  }, function(err, output) {
-  //    assert.isNotNull(err);
-  //    assert.include(err.stack, path.join(__dirname, 'test_components', 'RunTimeError.jsx'));
-  //    assert.isUndefined(output);
-  //    done();
-  //  });
-  //});
 });

@@ -1,1 +1,0 @@
-module.exports = '__BASIC_BUNDLE_REQUIRE_TEST__';
