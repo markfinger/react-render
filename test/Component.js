@@ -114,7 +114,10 @@ describe('Component', function() {
 
     component.getComponent(function(err, component) {
       assert.instanceOf(err, SyntaxError);
-      assert.include(err.stack, path.join(__dirname, 'test_components', 'SyntaxErrorComponent.js'));
+      // Node 0.10.x stack traces don't provide so much detail
+      if (!_.startsWith(process.version, 'v0.10')) {
+        assert.include(err.stack, path.join(__dirname, 'test_components', 'SyntaxErrorComponent.js'));
+      }
       assert.isUndefined(component);
       done();
     });
