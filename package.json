@@ -1,7 +1,7 @@
 {
   "name": "react-render",
   "version": "0.0.1",
-  "description": "blah",
+  "description": "React rendering wrapper",
   "author": "Mark Finger <markfinger@gmail.com",
   "license": "MIT",
   "main": "lib/index.js",
