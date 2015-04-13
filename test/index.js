@@ -154,4 +154,24 @@ describe('reactRender', function() {
       done();
     });
   });
+  it('can accept an option denoting a path to react', function(done) {
+    reactRender({
+      path: Hello,
+      pathToReact: path.join(__dirname, '..', 'node_modules', 'react'),
+      toStaticMarkup: true
+    }, function(err, markup) {
+      assert.isNull(err);
+      assert.equal(markup, '<div>Hello </div>');
+
+      reactRender({
+        path: Hello,
+        pathToReact: path.join(__dirname, '..', '..')
+      }, function(err, markup) {
+        assert.isNotNull(err);
+        assert.instanceOf(err, Error);
+        assert.isUndefined(markup);
+        done();
+      });
+    });
+  });
 });

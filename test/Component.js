@@ -137,4 +137,16 @@ describe('Component', function() {
       done();
     });
   });
+  it('can accept an option denoting a path to react', function(done) {
+    var component = new Component({
+      path: Hello,
+      pathToReact: path.join(__dirname, '..', 'node_modules', 'react')
+    });
+
+    component.getReact(function(err, React) {
+      assert.isNull(err);
+      assert.strictEqual(React, require('react'));
+      done();
+    });
+  });
 });
