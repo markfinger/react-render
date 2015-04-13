@@ -3,7 +3,7 @@ react-render
 
 [![Build Status](https://travis-ci.org/markfinger/react-render.svg?branch=master)](https://travis-ci.org/markfinger/react-render)
 
-React rendering wrapper.
+Handles the simple use case of loading in a component and rendering it to markup.
 
 
 Installation
