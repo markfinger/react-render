@@ -14,10 +14,8 @@
     "url": "https://github.com/markfinger/react-render.git"
   },
   "dependencies": {
-    "lodash": "^3.6.0"
-  },
-  "peerDependencies": {
-    "react": "*"
+    "lodash": "^3.6.0",
+    "resolve": "^1.1.6"
   },
   "devDependencies": {
     "chai": "^2.1.1",

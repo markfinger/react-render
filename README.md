@@ -21,14 +21,8 @@ Usage
 var reactRender = require('react-render');
 
 reactRender({
-  // Required
-  // --------
-
   // An absolute path to a module exporting your component
   path: '/abs/path/to/component.js',
-
-  // Or, you can provide an instance of your component
-  component: YourComponent,
 
   // Optional
   // --------

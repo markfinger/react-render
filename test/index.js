@@ -3,8 +3,9 @@ var assert = require('chai').assert;
 var reactRender = require('..');
 var cache = require('../lib/cache');
 var Component = require('../lib/Component');
-var Hello = require('./test_components/Hello');
-var ErrorThrowingComponent = require('./test_components/ErrorThrowingComponent');
+
+var Hello = path.join(__dirname, 'test_components', 'Hello.js');
+var ErrorThrowingComponent = path.join(__dirname, 'test_components', 'ErrorThrowingComponent.js');
 
 describe('reactRender', function() {
   beforeEach(function() {
@@ -15,7 +16,7 @@ describe('reactRender', function() {
   });
   it('can render a component to static markup', function(done) {
     reactRender({
-      component: Hello,
+      path: Hello,
       toStaticMarkup: true,
       props: {
         name: 'World'
@@ -28,7 +29,7 @@ describe('reactRender', function() {
   });
   it('can render a component to a string', function(done) {
     reactRender({
-      component: Hello,
+      path: Hello,
       props: {
         name: 'World'
       }
@@ -44,7 +45,7 @@ describe('reactRender', function() {
   });
   it('can render a component without props', function(done) {
     reactRender({
-      component: Hello,
+      path: Hello,
       toStaticMarkup: true
     }, function(err, output) {
       assert.isNull(err);
@@ -54,7 +55,7 @@ describe('reactRender', function() {
   });
   it('can parse props which are provided in a JSON serialized form', function(done) {
     reactRender({
-      component: Hello,
+      path: Hello,
       toStaticMarkup: true,
       serializedProps: '{"name": "World"}'
     }, function(err, output) {
@@ -94,11 +95,11 @@ describe('reactRender', function() {
     assert.equal(cache._cache.length, 0);
 
     reactRender({
-      component: Hello
+      path: Hello
     }, function() {
       assert.equal(cache._cache.length, 1);
       assert.instanceOf(cache._cache[0], Component);
-      assert.equal(cache._cache[0].component, Hello);
+      assert.equal(cache._cache[0].component, require(Hello));
       done();
     });
   });
@@ -144,7 +145,7 @@ describe('reactRender', function() {
   });
   it('passes up errors thrown during a component\'s rendering', function(done) {
     reactRender({
-      component: ErrorThrowingComponent
+      path: ErrorThrowingComponent
     }, function(err, output) {
       assert.instanceOf(err, Error);
       assert.include(err.stack, 'Error from inside ErrorThrowingComponent');

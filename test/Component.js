@@ -2,38 +2,29 @@ var path = require('path');
 var assert = require('chai').assert;
 var _ = require('lodash');
 var Component = require('../lib/Component');
-var Hello = require('./test_components/Hello');
-var ErrorThrowingComponent = require('./test_components/ErrorThrowingComponent');
+
+var Hello = path.join(__dirname, 'test_components', 'Hello.js');
+var ErrorThrowingComponent = path.join(__dirname, 'test_components', 'ErrorThrowingComponent.js');
+var SyntaxErrorComponent = path.join(__dirname, 'test_components', 'SyntaxErrorComponent.js');
 
 describe('Component', function() {
   it('is a function', function() {
     assert.isFunction(Component);
   });
-  it('can accept a component in its options', function(done) {
-    var component = new Component({
-      component: Hello
-    });
-
-    component.getComponent(function(err, component) {
-      assert.isNull(err);
-      assert.strictEqual(component, Hello);
-      done();
-    });
-  });
   it('can require a component specified by a path', function(done) {
     var component = new Component({
-      path: path.join(__dirname, 'test_components', 'Hello')
+      path: Hello
     });
 
     component.getComponent(function(err, component) {
       assert.isNull(err);
-      assert.strictEqual(component, Hello);
+      assert.strictEqual(component, require(Hello));
       done();
     });
   });
   it('can render a component to static markup', function(done) {
     var component = new Component({
-      component: Hello
+      path: Hello
     });
 
     component.renderToStaticMarkup(null, function(err, markup) {
@@ -44,7 +35,7 @@ describe('Component', function() {
   });
   it('can render a component to a string', function(done) {
     var component = new Component({
-      component: Hello
+      path: Hello
     });
 
     component.renderToString(null, function(err, markup) {
@@ -57,7 +48,7 @@ describe('Component', function() {
   });
   it('can render a component to static markup with props', function(done) {
     var component = new Component({
-      component: Hello
+      path: Hello
     });
 
     component.renderToStaticMarkup({
@@ -70,7 +61,7 @@ describe('Component', function() {
   });
   it('can render a component to a string with props', function(done) {
     var component = new Component({
-      component: Hello
+      path: Hello
     });
 
     component.renderToString({
@@ -97,29 +88,52 @@ describe('Component', function() {
   });
   it('passes up errors thrown during a component\'s rendering', function(done) {
     var component = new Component({
-      component: ErrorThrowingComponent
+      path: ErrorThrowingComponent
     });
 
     component.renderToString(null, function(err, output) {
       assert.instanceOf(err, Error);
       assert.include(err.stack, 'Error from inside ErrorThrowingComponent');
-      assert.include(err.stack, path.join(__dirname, 'test_components', 'ErrorThrowingComponent.js'));
+      assert.include(err.stack, ErrorThrowingComponent);
       assert.isUndefined(output);
       done();
     });
   });
   it('provides a SyntaxError if a component contains syntax errors', function(done) {
     var component = new Component({
-      path: path.join(__dirname, 'test_components', 'SyntaxErrorComponent.js')
+      path: SyntaxErrorComponent
     });
 
     component.getComponent(function(err, component) {
       assert.instanceOf(err, SyntaxError);
       // Node 0.10.x stack traces don't provide so much detail
       if (!_.startsWith(process.version, 'v0.10')) {
-        assert.include(err.stack, path.join(__dirname, 'test_components', 'SyntaxErrorComponent.js'));
+        assert.include(err.stack, SyntaxErrorComponent);
       }
       assert.isUndefined(component);
+      done();
+    });
+  });
+  it('can resolve React from a component\'s path', function(done) {
+    var component = new Component({
+      path: Hello
+    });
+
+    component.getReact(function(err, React) {
+      assert.isNull(err);
+      assert.strictEqual(React, require('react'));
+      done();
+    });
+  });
+  it('can provide an error if React is unresolvable from a component\'s path', function(done) {
+    var component = new Component({
+      path: path.join(__dirname, '..', '..', 'test.js')
+    });
+
+    component.getReact(function(err, React) {
+      assert.isNotNull(err);
+      assert.instanceOf(err, Error);
+      assert.isUndefined(React);
       done();
     });
   });
