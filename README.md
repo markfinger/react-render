@@ -5,6 +5,8 @@ react-render
 
 Handles the simple use case of loading in a component and rendering it to markup.
 
+To try and avoid version incompatibilities, React is resolved from the component's path.
+
 
 Installation
 ------------
