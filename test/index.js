@@ -1,7 +1,6 @@
 var path = require('path');
 var assert = require('chai').assert;
 var reactRender = require('..');
-var cache = require('../lib/cache');
 var Component = require('../lib/Component');
 
 var Hello = path.join(__dirname, 'test_components', 'Hello.js');
@@ -9,7 +8,7 @@ var ErrorThrowingComponent = path.join(__dirname, 'test_components', 'ErrorThrow
 
 describe('reactRender', function() {
   beforeEach(function() {
-    cache.clear();
+    reactRender._components.clear();
   });
   it('is a function', function() {
     assert.isFunction(reactRender);
@@ -91,57 +90,57 @@ describe('reactRender', function() {
     });
   });
   it('should create `Component` instances when called', function(done) {
-    assert.isArray(cache._cache);
-    assert.equal(cache._cache.length, 0);
+    assert.isArray(reactRender._components._cache);
+    assert.equal(reactRender._components._cache.length, 0);
 
     reactRender({
       path: Hello
     }, function() {
-      assert.equal(cache._cache.length, 1);
-      assert.instanceOf(cache._cache[0], Component);
-      assert.equal(cache._cache[0].component, require(Hello));
+      assert.equal(reactRender._components._cache.length, 1);
+      assert.instanceOf(reactRender._components._cache[0], Component);
+      assert.equal(reactRender._components._cache[0].component, require(Hello));
       done();
     });
   });
   it('should reuse Component instances when called', function() {
-    assert.isArray(cache._cache);
-    assert.equal(cache._cache.length, 0);
+    assert.isArray(reactRender._components._cache);
+    assert.equal(reactRender._components._cache.length, 0);
 
     reactRender({component: Hello}, function() {});
-    assert.equal(cache._cache.length, 1);
-    assert.instanceOf(cache._cache[0], Component);
-    assert.equal(cache._cache[0].component, Hello);
+    assert.equal(reactRender._components._cache.length, 1);
+    assert.instanceOf(reactRender._components._cache[0], Component);
+    assert.equal(reactRender._components._cache[0].component, Hello);
 
 
     reactRender({path: 'foo'}, function() {});
-    assert.equal(cache._cache.length, 2);
-    assert.instanceOf(cache._cache[1], Component);
-    assert.equal(cache._cache[1].opts.path, 'foo');
+    assert.equal(reactRender._components._cache.length, 2);
+    assert.instanceOf(reactRender._components._cache[1], Component);
+    assert.equal(reactRender._components._cache[1].opts.path, 'foo');
 
     reactRender({path: 'foo'}, function() {});
-    assert.equal(cache._cache.length, 2);
-    assert.instanceOf(cache._cache[1], Component);
-    assert.equal(cache._cache[1].opts.path, 'foo');
+    assert.equal(reactRender._components._cache.length, 2);
+    assert.instanceOf(reactRender._components._cache[1], Component);
+    assert.equal(reactRender._components._cache[1].opts.path, 'foo');
 
     reactRender({path: 'foo', props: {bar: 1}}, function() {});
-    assert.equal(cache._cache.length, 2);
-    assert.instanceOf(cache._cache[1], Component);
-    assert.equal(cache._cache[1].opts.path, 'foo');
+    assert.equal(reactRender._components._cache.length, 2);
+    assert.instanceOf(reactRender._components._cache[1], Component);
+    assert.equal(reactRender._components._cache[1].opts.path, 'foo');
 
     reactRender({path: 'bar', serializedProps: {bar: 1}}, function() {});
-    assert.equal(cache._cache.length, 3);
-    assert.instanceOf(cache._cache[2], Component);
-    assert.equal(cache._cache[2].opts.path, 'bar');
+    assert.equal(reactRender._components._cache.length, 3);
+    assert.instanceOf(reactRender._components._cache[2], Component);
+    assert.equal(reactRender._components._cache[2].opts.path, 'bar');
 
     reactRender({path: 'foo', serializedProps: '{"bar": 1}'}, function() {});
-    assert.equal(cache._cache.length, 3);
-    assert.instanceOf(cache._cache[1], Component);
-    assert.equal(cache._cache[1].opts.path, 'foo');
+    assert.equal(reactRender._components._cache.length, 3);
+    assert.instanceOf(reactRender._components._cache[1], Component);
+    assert.equal(reactRender._components._cache[1].opts.path, 'foo');
 
     reactRender({path: 'bar', serializedProps: '{"bar": 1}'}, function() {});
-    assert.equal(cache._cache.length, 3);
-    assert.instanceOf(cache._cache[2], Component);
-    assert.equal(cache._cache[2].opts.path, 'bar');
+    assert.equal(reactRender._components._cache.length, 3);
+    assert.instanceOf(reactRender._components._cache[2], Component);
+    assert.equal(reactRender._components._cache[2].opts.path, 'bar');
   });
   it('passes up errors thrown during a component\'s rendering', function(done) {
     reactRender({
@@ -152,26 +151,6 @@ describe('reactRender', function() {
       assert.include(err.stack, path.join(__dirname, 'test_components', 'ErrorThrowingComponent.js'));
       assert.isUndefined(output);
       done();
-    });
-  });
-  it('can accept an option denoting a path to react', function(done) {
-    reactRender({
-      path: Hello,
-      pathToReact: path.join(__dirname, '..', 'node_modules', 'react'),
-      toStaticMarkup: true
-    }, function(err, markup) {
-      assert.isNull(err);
-      assert.equal(markup, '<div>Hello </div>');
-
-      reactRender({
-        path: Hello,
-        pathToReact: path.join(__dirname, '..', '..')
-      }, function(err, markup) {
-        assert.isNotNull(err);
-        assert.instanceOf(err, Error);
-        assert.isUndefined(markup);
-        done();
-      });
     });
   });
 });

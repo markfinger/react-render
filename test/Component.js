@@ -114,39 +114,4 @@ describe('Component', function() {
       done();
     });
   });
-  it('can resolve React from a component\'s path', function(done) {
-    var component = new Component({
-      path: Hello
-    });
-
-    component.getReact(function(err, React) {
-      assert.isNull(err);
-      assert.strictEqual(React, require('react'));
-      done();
-    });
-  });
-  it('can provide an error if React is unresolvable from a component\'s path', function(done) {
-    var component = new Component({
-      path: path.join(__dirname, '..', '..', 'test.js')
-    });
-
-    component.getReact(function(err, React) {
-      assert.isNotNull(err);
-      assert.instanceOf(err, Error);
-      assert.isUndefined(React);
-      done();
-    });
-  });
-  it('can accept an option denoting a path to react', function(done) {
-    var component = new Component({
-      path: Hello,
-      pathToReact: path.join(__dirname, '..', 'node_modules', 'react')
-    });
-
-    component.getReact(function(err, React) {
-      assert.isNull(err);
-      assert.strictEqual(React, require('react'));
-      done();
-    });
-  });
 });
