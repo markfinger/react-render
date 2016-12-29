@@ -39,6 +39,10 @@ reactRender({
   // markup. Defaults to false.
   toStaticMarkup: true
 
+  // A flag indicating if you wish to disable caching for components. This is
+  // especially useful in development. Defaults to false.
+  noCache: false
+
 }, function(err, markup) {
   if (err) throw err;
 
