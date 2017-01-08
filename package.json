@@ -24,7 +24,8 @@
     "chai": "^3.0.0",
     "mocha": "^2.2.5",
     "react": "^0.14.2",
-    "react-dom": "^0.14.2"
+    "react-dom": "^0.14.2",
+    "decache": "^4.1.0"
   },
   "scripts": {
     "test": "mocha"
