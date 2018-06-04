@@ -1,6 +1,7 @@
 var React = require('react');
+var createReactClass = require('create-react-class');
 
-var SyntaxErrorComponent = React.createClass({
+var SyntaxErrorComponent = createReactClass({
   render: function() {
     ?+
   }

@@ -40,8 +40,7 @@ describe('Component', function() {
     component.renderToString(null, function(err, markup) {
       assert.isNull(err);
       assert.include(markup, '<div');
-      assert.include(markup, '><span');
-      assert.include(markup, '>Hello </span></div>');
+      assert.include(markup, '>Hello </div>');
       done();
     });
   });
@@ -68,9 +67,8 @@ describe('Component', function() {
     }, function(err, markup) {
       assert.isNull(err);
       assert.include(markup, '<div');
-      assert.include(markup, '><span');
-      assert.include(markup, '>Hello </span><span');
-      assert.include(markup, '>World</span>');
+      assert.include(markup, '>Hello ');
+      assert.include(markup, '>World');
       assert.include(markup, '</div>');
       done();
     });
