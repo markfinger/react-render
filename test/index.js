@@ -35,9 +35,8 @@ describe('reactRender', function() {
     }, function(err, output) {
       assert.isNull(err);
       assert.include(output, '<div');
-      assert.include(output, '><span');
-      assert.include(output, '>Hello </span><span');
-      assert.include(output, '>World</span>');
+      assert.include(output, '>Hello ');
+      assert.include(output, '>World');
       assert.include(output, '</div>');
       done();
     });
