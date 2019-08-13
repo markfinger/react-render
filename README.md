@@ -18,7 +18,7 @@ Usage
 -----
 
 ```javascript
-var reactRender = require('react-render');
+const reactRender = require('react-render');
 
 reactRender({
 
@@ -37,7 +37,7 @@ reactRender({
 
   // A flag indicating if you wish to render the component to static
   // markup. Defaults to false.
-  toStaticMarkup: true
+  toStaticMarkup: true,
 
   // A flag indicating if you wish to disable caching for components. This is
   // especially useful in development. Defaults to false.
