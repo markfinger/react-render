@@ -1,10 +1,9 @@
-var React = require('react');
-var createReactClass = require('create-react-class');
+const React = require('react');
 
-var ErrorThrowingComponent = createReactClass({
-  render: function() {
+class ErrorThrowingComponent extends React.Component{
+  render() {
     throw Error('Error from inside ErrorThrowingComponent');
   }
-});
+}
 
 module.exports = ErrorThrowingComponent;
