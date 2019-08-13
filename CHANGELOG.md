@@ -4,7 +4,7 @@
 
 - Added support for React hooks: [PR #16](https://github.com/markfinger/react-render/pull/16)
 - Updated internal deps (lodash & decache).
-- Internal refactor to use more JS features available in contemporary Node versions.
+- Internal refactor to take advantage of language features in contemporary Node versions.
 
 ## 3.0.0
 
