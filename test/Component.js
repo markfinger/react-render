@@ -1,17 +1,17 @@
-var path = require('path');
-var assert = require('chai').assert;
-var Component = require('../lib/Component');
+const path = require('path');
+const assert = require('chai').assert;
+const Component = require('../lib/Component');
 
-var Hello = path.join(__dirname, 'test_components', 'Hello.js');
-var ErrorThrowingComponent = path.join(__dirname, 'test_components', 'ErrorThrowingComponent.js');
-var SyntaxErrorComponent = path.join(__dirname, 'test_components', 'SyntaxErrorComponent.js');
+const Hello = path.join(__dirname, 'test_components', 'Hello.js');
+const ErrorThrowingComponent = path.join(__dirname, 'test_components', 'ErrorThrowingComponent.js');
+const SyntaxErrorComponent = path.join(__dirname, 'test_components', 'SyntaxErrorComponent.js');
 
 describe('Component', function() {
   it('is a function', function() {
     assert.isFunction(Component);
   });
   it('can require a component specified by a path', function(done) {
-    var component = new Component({
+    const component = new Component({
       path: Hello
     });
 
@@ -22,7 +22,7 @@ describe('Component', function() {
     });
   });
   it('can render a component to static markup', function(done) {
-    var component = new Component({
+    const component = new Component({
       path: Hello
     });
 
@@ -33,7 +33,7 @@ describe('Component', function() {
     });
   });
   it('can render a component to a string', function(done) {
-    var component = new Component({
+    const component = new Component({
       path: Hello
     });
 
@@ -45,7 +45,7 @@ describe('Component', function() {
     });
   });
   it('can render a component to static markup with props', function(done) {
-    var component = new Component({
+    const component = new Component({
       path: Hello
     });
 
@@ -58,7 +58,7 @@ describe('Component', function() {
     });
   });
   it('can render a component to a string with props', function(done) {
-    var component = new Component({
+    const component = new Component({
       path: Hello
     });
 
@@ -74,7 +74,7 @@ describe('Component', function() {
     });
   });
   it('should return an error if neither `component` and `path` have been defined', function(done) {
-    var component = new Component({});
+    const component = new Component({});
 
     component.getComponent(function(err, component) {
       assert.instanceOf(err, Error);
@@ -84,7 +84,7 @@ describe('Component', function() {
     });
   });
   it('passes up errors thrown during a component\'s rendering', function(done) {
-    var component = new Component({
+    const component = new Component({
       path: ErrorThrowingComponent
     });
 
@@ -97,7 +97,7 @@ describe('Component', function() {
     });
   });
   it('provides a SyntaxError if a component contains syntax errors', function(done) {
-    var component = new Component({
+    const component = new Component({
       path: SyntaxErrorComponent
     });
 
